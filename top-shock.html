@@ -3,8 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>JS Objekter</title>
+    <title>Top Shock</title>
     <style>
+        * {
+            margin: 0;
+        }
+
         section {
             width: 100vw;
             max-width: 1200px;
@@ -140,6 +144,16 @@
             font-weight: 600;
             font-style: normal;
         }
+
+        #logo {
+            display: flex;
+            justify-content: center;
+            margin: 10vw
+        }
+
+        #logo img {
+            width: 50vw;
+        }
     </style>
 </head>
 
@@ -154,7 +168,7 @@
             <p class="kategori">kategori</p>
             <p class="lang">lang</p>
             <p class="oprindelse">oprindelse</p>
-            <p class="pris">Pris</p>
+            <p class="rating">Rating</p>
             <img src="" alt="">
         </article>
     </div>
@@ -166,7 +180,7 @@
             <p class="kort">kort</p>
             <p class="kategori">kategori</p>
             <p class="oprindelse">oprindelse</p>
-            <p class="pris">Pris</p>
+            <p class="rating">Rating</p>
             <img src="" alt="">
         </article>
     </template>
@@ -174,17 +188,19 @@
 
     <main>
 
-        <h4>Bistro Babushka</h4>
-
+        <div id="logo">
+            <img src="topshock%20logo.png" alt="">
+        </div>
 
         <header>
-            <button class="filter valgt" data-kategori="alle">Alle</button>
-            <button class="filter" data-kategori="forretter">Forret</button>
-            <button class="filter" data-kategori="hovedretter">Hovedret</button>
-            <button class="filter" data-kategori="sideorders">Sides</button>
-            <button class="filter" data-kategori="desserter">Dessert</button>
-            <button class="filter" data-kategori="drikkevarer">Drikkevarer</button>
+            <button class="filter valgt" data-kategori="alle">All</button>
+            <button class="filter" data-kategori="komedie">Comedies</button>
+            <button class="filter" data-kategori="horror">Horror</button>
+            <button class="filter" data-kategori="drama">Drama</button>
+            <button class="filter" data-kategori="sci-fi">Sci-fi</button>
+            <button class="filter" data-kategori="action">Action</button>
         </header>
+
 
 
         <h1>Alle</h1>
@@ -202,10 +218,12 @@
 
 
 
-
         async function loadJSON() {
-            const JSONData = await fetch("https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json");
+            const JSONData = await fetch("https://spreadsheets.google.com/feeds/list/1RtZ3HGJ_eA2ANGul6V8i_lxGcxrlHP1UxPxHG1Ts4YQ/od6/public/values?alt=json");
             personer = await JSONData.json();
+            console.log({
+                personer
+            });
             addEventListenersToButtons();
             visPersoner();
 
@@ -217,8 +235,8 @@
             listPointer.innerHTML = "";
 
             personer.feed.entry.forEach(person => {
-                if (filter == "alle" || filter == person.gsx$kategori.$t) {
-                    console.log(person);
+                if (filter == "alle" || filter == person.gsx$kategori.$t.toLowerCase()) {
+                    console.log(person.gsx$kategori.$t.toLowerCase());
 
                     const minKlon = templatePointer.cloneNode(true).content;
 
@@ -227,10 +245,8 @@
                     minKlon.querySelector("img").src = `large/${person.gsx$billede.$t}.jpg`;
                     minKlon.querySelector(".kort").textContent = person.gsx$kort.$t;
                     minKlon.querySelector(".kategori").textContent = person.gsx$kategori.$t;
-                    minKlon.querySelector(".pris").textContent = person.gsx$pris.$t + ',-';
+                    minKlon.querySelector(".rating").textContent = person.gsx$rating.$t + ',-';
                     minKlon.querySelector(".oprindelse").textContent = person.gsx$oprindelse.$t;
-
-
 
 
                     minKlon.querySelector("article").addEventListener("click", () => visDetaljer(person));
@@ -252,7 +268,7 @@
             popup.querySelector("img").src = `large/${person.gsx$billede.$t}.jpg`;
             popup.querySelector(".kort").textContent = person.gsx$kort.$t;
             popup.querySelector(".kategori").textContent = person.gsx$kategori.$t;
-            popup.querySelector(".pris").textContent = person.gsx$pris.$t + ',-';
+            popup.querySelector(".rating").textContent = person.gsx$rating.$t + ',-';
             popup.querySelector(".oprindelse").textContent = person.gsx$oprindelse.$t;
             popup.querySelector(".lang").textContent = person.gsx$lang.$t;
 
@@ -271,6 +287,7 @@
 
         function filterBTNs() {
             filter = this.dataset.kategori;
+            console.log("knap tryk", filter);
             document.querySelector("h1").textContent = this.textContent;
 
             document.querySelectorAll(".filter").forEach((btn) => {
